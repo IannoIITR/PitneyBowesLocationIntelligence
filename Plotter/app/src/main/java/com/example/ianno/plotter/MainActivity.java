@@ -238,18 +238,18 @@ public class MainActivity extends FragmentActivity implements OnClickListener,On
 
 
         // The map will be cleared on long click
-        map.setOnMapLongClickListener(new OnMapLongClickListener() {
-
-            @Override
-            public void onMapLongClick(LatLng point) {
-                // Removes all the points from Google Map
-                map.clear();
-
-                // Removes all the points in the ArrayList
-                markerPoints.clear();
-
-            }
-        });
+//        map.setOnMapLongClickListener(new OnMapLongClickListener() {
+//
+//            @Override
+//            public void onMapLongClick(LatLng point) {
+//                // Removes all the points from Google Map
+//                map.clear();
+//
+//                // Removes all the points in the ArrayList
+//                markerPoints.clear();
+//
+//            }
+//        });
 
 
         // Click event handler for Button btn_draw
@@ -549,7 +549,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,On
         if (scanningResult != null) {
             scanContent = scanningResult.getContents();
             scanFormat = scanningResult.getFormatName();
-            sendData("2");
+            sendData("1");sendData("2");sendData("3");
 //we have a result
         }
         else{
@@ -588,21 +588,28 @@ public class MainActivity extends FragmentActivity implements OnClickListener,On
                         else if(pathcode.equals("3"))
                         {
                             //send phone location
+                            if(s.equals("Yes")){
+                                Log.d(TAG,"Sent Phone Location");
+                            }
                         }
-                        else if(pathcode.equals("4"))
-                        {
-                            //get parcel location
-                            String[] locations = s.split(","); // Received location co-ordinates of parcels to be delivered
-                        }
+//                        else if(pathcode.equals("4"))
+//                        {
+//                            //get parcel location
+//                            String[] locations = s.split(","); // Received location co-ordinates of parcels to be delivered
+//                            ArrayList<Float> latitudes = new ArrayList<>();
+//                            ArrayList<Float> longitudes = new ArrayList<>();
+//
+//                            for(String i:locations)
+//                            {
+//                                String[] temp = i.split(":");
+//                                latitudes.add(Float.parseFloat(temp[0]));
+//                                longitudes.add(Float.parseFloat(temp[1]));
+//                            }
+//
+//                        }
                         //Showing toast message of the response
                         Log.d(TAG,"Listener");
-                        //converts base64 to bitmap
-//                        byte[] decodedString = Base64.decode(s, Base64.DEFAULT);
-//                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//
-//                        imgTakenPhoto.setImageBitmap(decodedByte);
-                        // Toast.makeText(MainActivity.this, s , Toast.LENGTH_LONG).show();
-                    }
+                        }
                 },
                 new Response.ErrorListener() {
                     @Override
@@ -626,7 +633,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,On
                 String parcelCode = "ParcelCode";
 
                 //using random string for imei or meid, ideally it will fetched from phone
-                String imeid = "123456789";
+                String imeid = "197534826354684321624587";
                 //Creating parameters
                 Map<String,String> params = new Hashtable<String, String>();
 
