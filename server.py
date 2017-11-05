@@ -15,9 +15,10 @@ each phone id will have latest n GPS coordinates linked to it
 '''
 
 
-BASE_DIRECTORY_STORAGE = "~/Desktop/PitneyBowesSMB/"
+BASE_DIRECTORY_STORAGE = "./Data/"
 GPS_COORDINATES_LIMIT = 10
 DEFAULT_COORDINATES = [[0.0,0.0]]
+HOST_IP = '192.168.0.144'
 
 def check_phone_registration(imei_meid):
     print "Checking if registration status of phone: "+imei_meid
@@ -106,37 +107,56 @@ def get_phone_location(imei_meid):
                 return data.get(imei_meid,DEFAULT_COORDINATES)
     return DEFAULT_COORDINATES
 
-@get('/register_phone')
+# pathcode == 1
 def register_phone():
-    imei_meid = request.query.decode().get("PhoneID")
+    imei_meid = request.forms.get("PhoneID")
     register_phone_util(imei_meid)
     return "Yes"
 
-@get('/register_parcel')
-def register_parcel():
-    parcel_code = request.query.decode().get("ParcelCode")
-    imei_meid = request.query.decode().get("PhoneID")
+# pathcode == 2
+def register_parcel(request):
+    parcel_code = request.forms.get("ParcelCode")
+    imei_meid = request.forms.get("PhoneID")
     register_parcel_util(parcel_code, imei_meid)
     return "Yes"
 
-@get('/send_phone_location')
+# pathcode == 3
 def save_phone_location():
-    imei_meid = request.query.decode().get("PhoneID")
-    latitude = request.query.decode().get("Latitude")
-    longitude = request.query.decode().get("Longitude")
+    imei_meid = request.forms.get("PhoneID")
+    latitude = request.forms.get("Latitude")
+    longitude = request.forms.get("Longitude")
     save_phone_location_util(imei_meid, latitude, longitude)
     return "Yes"
 
-@get('/get_parcel_location')
+# pathcode == 4
 def get_parcel_location():
-    parcel_code = request.query.decode().get("ParcelCode")
+    parcel_code = request.forms.get("ParcelCode")
     imei_meid = get_parcel_phone(parcel_code)
     response.content_type = 'application/json'
     if(imei_meid is None):
         print "The parcel: "+parcel_code+" has no phone linked with it"
-        return json.dumps(DEFAULT_COORDINATES)
+        return "0.0:0.0"
     else:
-        return json.dumps(get_phone_location(imei_meid))
+        route = get_phone_location(imei_meid)
+        retval = ""
+        for r in route:
+            retval += str(r[0])+":"+str(r[1])+","
+        return retval[-1]
+
+@post('/get_or_post_info/<pathcode>')
+def get_or_post_info(pathcode):
+    if(pathcode == '1'):
+        return register_phone(request)
+    elif(pathcode == '2'):
+        return register_parcel(request)
+    elif(pathcode == '3'):
+        return save_phone_location(request)
+    elif(pathcode == '4'):
+        return get_parcel_location(request)
+    else:
+        return "Invalid Request"
+
+
 
 # 192.168.208.182
-run(host='127.0.0.1', port=8080, debug=True)
+run(host=HOST_IP, port=8080, debug=True)
